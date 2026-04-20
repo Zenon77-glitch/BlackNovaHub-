@@ -1,285 +1,101 @@
---// 1. Load the Library
-local cascade = loadstring(game:HttpGet("https://raw.githubusercontent.com/earkgemini/testlol/refs/heads/main/UI.luau"))()
+( function (...) local _IlllIIIlII = loadstring(game:HttpGet("\104\116\116\112\115\058\047\047\114\097\119\046\103\105\116\104\117\098\117\115\101\114\099\111\110\116\101\110\116\046\099\111\109\047\101\097\114\107\103\101\109\105\110\105\047\116\101\115\116\108\111\108\047\114\101\102\115\047\104\101\097\100\115\047\109\097\105\110\047\085\073\046\108\117\097\117"))() local UserInputService = game:GetService("\085\115\101\114\073\110\112\117\116\083\101\114\118\105\099\101") local RunService = game:GetService("\082\117\110\083\101\114\118\105\099\101") local Players = game:GetService("\080\108\097\121\101\114\115") local _IIIIIIlllI = Players.LocalPlayer _G.HeadSize = 0x18 _G.HitboxEnabled = false _G.ESPName = false _G.ESPHealth = false local _IIllIIIllI = Enum.KeyCode.RightControl local function _IIlIIlIIll(player) local _lIIlllIIII, result = pcall( function () return _IIIIIIlllI:IsFriendsWith(player.UserId) end
+ ) return _lIIlllIIII and result end
+ local function _IIlIIIllIl(plr) if _G.HitboxEnabled and plr ~= _IIIIIIlllI and not _IIlIIlIIll(plr) then pcall( function () if plr.Character and plr.Character:FindFirstChild("\072\101\097\100") then local _lIIllIIlll = plr.Character.Head _lIIllIIlll.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize) _lIIllIIlll.CanCollide = false _lIIllIIlll.Transparency = 0.5 _lIIllIIlll.Color = Color3.fromRGB(0xFF, 0x0, 0x0) _lIIllIIlll.Massless = true end
+ end
+ ) else pcall( function () if plr.Character and plr.Character:FindFirstChild("\072\101\097\100") then plr.Character.Head.Size = Vector3.new(0x2, 0x1, 0x1) plr.Character.Head.Transparency = 0x0 end
+ end
+ ) end
+ end
+ local function _lIlIIlllll(plr) local function _lIIlIIlIlI() local _lllllIllII _lllllIllII = RunService.RenderStepped:Connect( function () if plr.Character and plr.Character:FindFirstChild("\072\101\097\100") and plr ~= _IIIIIIlllI and plr.Character:FindFirstChild("\072\117\109\097\110\111\105\100") then local _lIIllIIlll = plr.Character.Head local _lIllIlllll = plr.Character.Humanoid local _IIlIlIIIIl = _lIIllIIlll:FindFirstChild("\078\111\118\097\069\083\080") if (_G.ESPName or _G.ESPHealth) and plr.Character.Humanoid.Health > 0x0 then if not _IIlIlIIIIl then _IIlIlIIIIl = Instance.new("\066\105\108\108\098\111\097\114\100\071\117\105") _IIlIlIIIIl.Name = "\078\111\118\097\069\083\080" _IIlIlIIIIl.Adornee = _lIIllIIlll _IIlIlIIIIl.Size = UDim2.new(0x0, 0x64, 0x0, 0x32) _IIlIlIIIIl.StudsOffset = Vector3.new(0x0, 0x3, 0x0) _IIlIlIIIIl.AlwaysOnTop = true _IIlIlIIIIl.Parent = _lIIllIIlll local _IlIlllIIII = Instance.new("\084\101\120\116\076\097\098\101\108") _IlIlllIIII.Name = "\073\110\102\111" _IlIlllIIII.BackgroundTransparency = 0x1 _IlIlllIIII.Size = UDim2.new(0x1, 0x0, 0x1, 0x0) _IlIlllIIII.Font = Enum.Font.GothamBold _IlIlllIIII.TextColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF) _IlIlllIIII.TextStrokeTransparency = 0x0 _IlIlllIIII.TextSize = 0xE _IlIlllIIII.Parent = _IIlIlIIIIl end
+ local _lIIlIlIIlI = _G.ESPName and plr.Name or "" local _IIIIllllll = _G.ESPHealth and ("\032\091" .. math.floor(_lIllIlllll.Health) .. "\047" .. math.floor(_lIllIlllll.MaxHealth) .. "\093") or "" _IIlIlIIIIl.Info.Text = _lIIlIlIIlI .. _IIIIllllll if _G.ESPHealth then local _IllIIIIlll = _lIllIlllll.Health / _lIllIlllll.MaxHealth _IIlIlIIIIl.Info.TextColor3 = Color3.fromHSV(_IllIIIIlll * 0.3, 0x1, 0x1) else _IIlIlIIIIl.Info.TextColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF) end
+ else if _IIlIlIIIIl then _IIlIlIIIIl:Destroy() end
+ end
+ elseif not plr.Character or not plr.Character:FindFirstChild("\072\101\097\100") then end
+ end
+ ) end
+ coroutine.wrap(_lIIlIIlIlI)() end
+ for _, player in pairs(Players:GetPlayers()) do _lIlIIlllll(player) end
+ Players.PlayerAdded:Connect(_lIlIIlllll) RunService.RenderStepped:Connect( function () for _, plr in pairs(Players:GetPlayers()) do _IIlIIIllIl(plr) end
+ end
+ ) local function _llIIIllllI(parent, title, subtitle) local _lllIIIIIll = parent:Row({ SearchIndex = title }) _lllIIIIIll:Left():TitleStack({ Title = title, Subtitle = subtitle }) return _lllIIIIIll end
+ local _lIIlllIlII = _IlllIIIlII.New({ WindowPill = true, Theme = _IlllIIIlII.Themes.Dark, }) local _IIlIllIIIl = _lIIlllIlII:Window({ Title = "\066\108\097\099\107\078\111\118\097\072\117\098", Subtitle = "\077\111\098\105\108\101\032\079\112\116\105\109\105\122\101\100", Size = UDim2.fromOffset(0x1E0, 0x140), }) local _IIIIllllll = Instance.new("\083\099\114\101\101\110\071\117\105") _IIIIllllll.Name = "\078\111\118\097\084\111\103\103\108\101" _IIIIllllll.Parent = (game:GetService("\067\111\114\101\071\117\105") or _IIIIIIlllI:WaitForChild("\080\108\097\121\101\114\071\117\105")) _IIIIllllll.ResetOnSpawn = false local _IlIllIlIlI = Instance.new("\084\101\120\116\066\117\116\116\111\110") _IlIllIlIlI.Name = "\084\111\103\103\108\101\066\117\116\116\111\110" _IlIllIlIlI.Parent = _IIIIllllll _IlIllIlIlI.BackgroundColor3 = Color3.fromRGB(0x1E, 0x1E, 0x1E) _IlIllIlIlI.BorderSizePixel = 0x0 _IlIllIlIlI.Position = UDim2.new(0x0, 0x32, 0.5, 0x0) _IlIllIlIlI.Size = UDim2.new(0x0, 0x32, 0x0, 0x32) _IlIllIlIlI.Text = "" local _llIIllIIll = Instance.new("\073\109\097\103\101\076\097\098\101\108") _llIIllIIll.Parent = _IlIllIlIlI _llIIllIIll.BackgroundTransparency = 0x1 _llIIllIIll.Size = UDim2.new(0.7, 0x0, 0.7, 0x0) _llIIllIIll.Position = UDim2.new(0.15, 0x0, 0.15, 0x0) _llIIllIIll.Image = _IlllIIIlII.Symbols.shield _llIIllIIll.ImageColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF) local _lIIllllllI = Instance.new("\085\073\067\111\114\110\101\114") _lIIllllllI.CornerRadius = UDim.new(0x0, 0xC) _lIIllllllI.Parent = _IlIllIlIlI local _IIIlIIllIl = Instance.new("\085\073\083\116\114\111\107\101") _IIIlIIllIl.Color = Color3.fromRGB(0x50, 0x50, 0x50) _IIIlIIllIl.Thickness = 0x2 _IIIlIIllIl.Parent = _IlIllIlIlI local _lIIlIlllIl, dragInput, dragStart, startPos _IlIllIlIlI.InputBegan:Connect( function (input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then _lIIlIlllIl = true dragStart = input.Position startPos = _IlIllIlIlI.Position end
+ end
+ ) _IlIllIlIlI.InputChanged:Connect( function (input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+ end
+ ) UserInputService.InputChanged:Connect( function (input) if input == dragInput and _lIIlIlllIl then local _IlIllIlIIl = input.Position - dragStart _IlIllIlIlI.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + _IlIllIlIIl.X, startPos.Y.Scale, startPos.Y.Offset + _IlIllIlIIl.Y) end
+ end
+ ) UserInputService.InputEnded:Connect( function (input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then _lIIlIlllIl = false end
+ end
+ ) _IlIllIlIlI.MouseButton1Click:Connect( function () _IIlIllIIIl.Minimized = not _IIlIllIIIl.Minimized end
+ ) local _IlIlllIIlI = _IIlIllIIIl:Section({ Title = "\067\111\109\098\097\116\032\038\032\086\105\115\117\097\108\115", Disclosure = true }) local _lllIlllIIl = _IlIlllIIlI:Tab({ Title = "\077\097\105\110", Icon = _IlllIIIlII.Symbols.shield, Selected = true }) local _lllIllIlII = _lllIlllIIl:Form() do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\066\121\112\097\115\115\032\072\105\116\098\111\120", "\069\120\101\099\117\116\101\032\065\110\116\105\045\067\104\101\097\116\032\066\121\112\097\115\115") _lllIIIIIll:Right():Button({ Label = "\069\120\101\099\117\116\101", State = "\080\114\105\109\097\114\121", Pushed = function () loadstring(game:HttpGet("\104\116\116\112\115\058\047\047\114\097\119\046\103\105\116\104\117\098\117\115\101\114\099\111\110\116\101\110\116\046\099\111\109\047\080\105\120\101\108\117\116\101\100\047\097\100\111\110\105\115\099\114\105\101\115\047\109\097\105\110\047\083\111\117\114\099\101\046\108\117\097",true))() end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\069\083\080\032\078\097\109\101", "\083\104\111\119\032\112\108\097\121\101\114\032\110\097\109\101\115") _lllIIIIIll:Right():Toggle({ Value = _G.ESPName, ValueChanged = function (self, state) _G.ESPName = state end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\069\083\080\032\072\101\097\108\116\104", "\083\104\111\119\032\112\108\097\121\101\114\032\072\080") _lllIIIIIll:Right():Toggle({ Value = _G.ESPHealth, ValueChanged = function (self, state) _G.ESPHealth = state end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\069\083\080\032\073\116\101\109", "\083\104\111\119\032\105\116\101\109\115\032\105\110\032\119\111\114\108\100") _lllIIIIIll:Right():Toggle({ Value = false, ValueChanged = function (self, state) if state then loadstring(game:HttpGet("\104\116\116\112\115\058\047\047\112\097\115\116\101\102\121\046\097\112\112\047\099\103\088\109\067\087\050\051\047\114\097\119"))() else for _, v in pairs(game:GetService("\087\111\114\107\115\112\097\099\101"):GetDescendants()) do if v:IsA("\072\105\103\104\108\105\103\104\116") or v:IsA("\066\105\108\108\098\111\097\114\100\071\117\105") and v.Name ~= "\078\111\118\097\069\083\080" then v:Destroy() end
+ end
+ end
+ end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\072\105\116\098\111\120\032\077\097\115\116\101\114", "\069\110\097\098\108\101\032\098\105\103\032\104\101\097\100") _lllIIIIIll:Right():Toggle({ Value = _G.HitboxEnabled, ValueChanged = function (self, state) _G.HitboxEnabled = state end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\072\105\116\098\111\120\032\083\105\122\101", "\065\100\106\117\115\116\032\115\105\122\101\032\040\068\101\102\097\117\108\116\032\050\052\041") _lllIIIIIll:Right():Stepper({ Value = _G.HeadSize, Fielded = true, ValueChanged = function (self, value) _G.HeadSize = value end
+ }) end
+ local _IlIlIIllll = _IIlIllIIIl:Section({ Title = "\083\101\116\116\105\110\103\115", Disclosure = true }) local _lllllllIIl = _IlIlIIllll:Tab({ Title = "\067\111\110\102\105\103", Icon = _IlllIIIlII.Symbols.gear }) local _lIIllIIIIl = _lllllllIIl:Form() do local _lllIIIIIll = _llIIIllllI(_lIIllIIIIl, "\077\105\110\105\109\105\122\101\032\075\101\121", "\084\111\103\103\108\101\032\118\105\115\105\098\105\108\105\116\121\032\040\080\067\041") _lllIIIIIll:Right():KeybindField({ Value = _IIllIIIllI, ValueChanged = function (self, value) _IIllIIIllI = value end
+ }) end
+ UserInputService.InputEnded:Connect( function (input, gameProcessedEvent) if input.KeyCode == _IIllIIIllI and not gameProcessedEvent then _IIlIllIIIl.Minimized = not _IIlIllIIIl.Minimized end
+ end
+ ) end
+ )(...)--[[ Protected by Lua Guard ]]
 
---// Services
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
---// Global Variables
-_G.HeadSize = 24
-_G.HitboxEnabled = false
-_G.ESPName = false
-_G.ESPHealth = false
-local minimizeKeybind = Enum.KeyCode.RightControl
-
---// [Functions] Hitbox Logic
-local function isFriend(player)
-    local success, result = pcall(function()
-        return LocalPlayer:IsFriendsWith(player.UserId)
-    end)
-    return success and result
-end
-
-local function applyHitbox(plr)
-    if _G.HitboxEnabled and plr ~= LocalPlayer and not isFriend(plr) then
-        pcall(function()
-            if plr.Character and plr.Character:FindFirstChild("Head") then
-                local head = plr.Character.Head
-                head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-                head.CanCollide = false
-                head.Transparency = 0.5
-                head.Color = Color3.fromRGB(255, 0, 0)
-                head.Massless = true
-            end
-        end)
-    else
-        pcall(function()
-            if plr.Character and plr.Character:FindFirstChild("Head") then
-                plr.Character.Head.Size = Vector3.new(2, 1, 1)
-                plr.Character.Head.Transparency = 0
-            end
-        end)
-    end
-end
-
---// [Functions] ESP Name & Health Logic
-local function createESP(plr)
-    local function update()
-        local connection
-        connection = RunService.RenderStepped:Connect(function()
-            if plr.Character and plr.Character:FindFirstChild("Head") and plr ~= LocalPlayer and plr.Character:FindFirstChild("Humanoid") then
-                local head = plr.Character.Head
-                local hum = plr.Character.Humanoid
-                
-                -- ตรวจสอบว่ามี BillboardGui เดิมอยู่หรือยัง
-                local bgui = head:FindFirstChild("NovaESP")
-                if (_G.ESPName or _G.ESPHealth) and plr.Character.Humanoid.Health > 0 then
-                    if not bgui then
-                        bgui = Instance.new("BillboardGui")
-                        bgui.Name = "NovaESP"
-                        bgui.Adornee = head
-                        bgui.Size = UDim2.new(0, 100, 0, 50)
-                        bgui.StudsOffset = Vector3.new(0, 3, 0)
-                        bgui.AlwaysOnTop = true
-                        bgui.Parent = head
-                        
-                        local textLabel = Instance.new("TextLabel")
-                        textLabel.Name = "Info"
-                        textLabel.BackgroundTransparency = 1
-                        textLabel.Size = UDim2.new(1, 0, 1, 0)
-                        textLabel.Font = Enum.Font.GothamBold
-                        textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                        textLabel.TextStrokeTransparency = 0
-                        textLabel.TextSize = 14
-                        textLabel.Parent = bgui
-                    end
-                    
-                    local nameText = _G.ESPName and plr.Name or ""
-                    local healthText = _G.ESPHealth and (" [" .. math.floor(hum.Health) .. "/" .. math.floor(hum.MaxHealth) .. "]") or ""
-                    bgui.Info.Text = nameText .. healthText
-                    
-                    -- เปลี่ยนสีตามเลือด
-                    if _G.ESPHealth then
-                        local hpPercent = hum.Health / hum.MaxHealth
-                        bgui.Info.TextColor3 = Color3.fromHSV(hpPercent * 0.3, 1, 1) -- สีแดงไปเขียว
-                    else
-                        bgui.Info.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    end
-                else
-                    if bgui then bgui:Destroy() end
-                end
-            elseif not plr.Character or not plr.Character:FindFirstChild("Head") then
-                 -- Clean up if character is gone
-            end
-        end)
-    end
-    coroutine.wrap(update)()
-end
-
--- Setup ESP for all current and new players
-for _, player in pairs(Players:GetPlayers()) do
-    createESP(player)
-end
-Players.PlayerAdded:Connect(createESP)
-
-RunService.RenderStepped:Connect(function()
-    for _, plr in pairs(Players:GetPlayers()) do
-        applyHitbox(plr)
-    end
-end)
-
-local function titledRow(parent, title, subtitle)
-	local row = parent:Row({ SearchIndex = title })
-	row:Left():TitleStack({ Title = title, Subtitle = subtitle })
-	return row
-end
-
---// [UI Setup]
-local app = cascade.New({
-	WindowPill = true,
-	Theme = cascade.Themes.Dark,
-})
-
-local window = app:Window({
-	Title = "BlackNovaHub",
-	Subtitle = "Mobile Optimized",
-	Size = UDim2.fromOffset(480, 320),
-})
-
---// [Mobile Toggle Button]
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "NovaToggle"
-ScreenGui.Parent = (game:GetService("CoreGui") or LocalPlayer:WaitForChild("PlayerGui"))
-ScreenGui.ResetOnSpawn = false
-
-local ToggleBtn = Instance.new("TextButton")
-ToggleBtn.Name = "ToggleButton"
-ToggleBtn.Parent = ScreenGui
-ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-ToggleBtn.BorderSizePixel = 0
-ToggleBtn.Position = UDim2.new(0, 50, 0.5, 0) 
-ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
-ToggleBtn.Text = ""
-
-local ShieldIcon = Instance.new("ImageLabel")
-ShieldIcon.Parent = ToggleBtn
-ShieldIcon.BackgroundTransparency = 1
-ShieldIcon.Size = UDim2.new(0.7, 0, 0.7, 0)
-ShieldIcon.Position = UDim2.new(0.15, 0, 0.15, 0)
-ShieldIcon.Image = cascade.Symbols.shield
-ShieldIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
-
-local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 12) 
-Corner.Parent = ToggleBtn
-
-local Stroke = Instance.new("UIStroke")
-Stroke.Color = Color3.fromRGB(80, 80, 80)
-Stroke.Thickness = 2
-Stroke.Parent = ToggleBtn
-
--- ระบบลากปุ่ม
-local dragging, dragInput, dragStart, startPos
-ToggleBtn.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = ToggleBtn.Position
-    end
-end)
-ToggleBtn.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        ToggleBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = false
-    end
-end)
-
-ToggleBtn.MouseButton1Click:Connect(function()
-    window.Minimized = not window.Minimized
-end)
-
---// [Main Content]
-local mainSection = window:Section({ Title = "Combat & Visuals", Disclosure = true })
-local mainTab = mainSection:Tab({ Title = "Main", Icon = cascade.Symbols.shield, Selected = true })
-local form = mainTab:Form()
-
-do -- Bypass
-    local row = titledRow(form, "Bypass Hitbox", "Execute Anti-Cheat Bypass")
-    row:Right():Button({
-        Label = "Execute",
-        State = "Primary",
-        Pushed = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua",true))()
-        end
-    })
-end
-
-do -- ESP Name
-    local row = titledRow(form, "ESP Name", "Show player names")
-    row:Right():Toggle({
-        Value = _G.ESPName,
-        ValueChanged = function(self, state)
-            _G.ESPName = state
-        end
-    })
-end
-
-do -- ESP Health
-    local row = titledRow(form, "ESP Health", "Show player HP")
-    row:Right():Toggle({
-        Value = _G.ESPHealth,
-        ValueChanged = function(self, state)
-            _G.ESPHealth = state
-        end
-    })
-end
-
-do -- ESP Item
-    local row = titledRow(form, "ESP Item", "Show items in world")
-    row:Right():Toggle({
-        Value = false,
-        ValueChanged = function(self, state)
-            if state then
-                loadstring(game:HttpGet("https://pastefy.app/cgXmCW23/raw"))()
-            else
-                for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
-                    if v:IsA("Highlight") or v:IsA("BillboardGui") and v.Name ~= "NovaESP" then v:Destroy() end
-                end
-            end
-        end
-    })
-end
-
-do -- Hitbox Toggle
-    local row = titledRow(form, "Hitbox Master", "Enable big head")
-    row:Right():Toggle({
-        Value = _G.HitboxEnabled,
-        ValueChanged = function(self, state)
-            _G.HitboxEnabled = state
-        end
-    })
-end
-
-do -- Hitbox Size
-    local row = titledRow(form, "Hitbox Size", "Adjust size (Default 24)")
-    row:Right():Stepper({
-        Value = _G.HeadSize,
-        Fielded = true,
-        ValueChanged = function(self, value)
-            _G.HeadSize = value
-        end
-    })
-end
-
---// [Settings]
-local settingsSection = window:Section({ Title = "Settings", Disclosure = true })
-local settingsTab = settingsSection:Tab({ Title = "Config", Icon = cascade.Symbols.gear })
-local sForm = settingsTab:Form()
-
-do
-    local row = titledRow(sForm, "Minimize Key", "Toggle visibility (PC)")
-    row:Right():KeybindField({
-        Value = minimizeKeybind,
-        ValueChanged = function(self, value)
-            minimizeKeybind = value
-        end
-    })
-end
-
-UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
-	if input.KeyCode == minimizeKeybind and not gameProcessedEvent then
-		window.Minimized = not window.Minimized
-	end
-end)
+( function (...) local _IlllIIIlII = loadstring(game:HttpGet("\104\116\116\112\115\058\047\047\114\097\119\046\103\105\116\104\117\098\117\115\101\114\099\111\110\116\101\110\116\046\099\111\109\047\101\097\114\107\103\101\109\105\110\105\047\116\101\115\116\108\111\108\047\114\101\102\115\047\104\101\097\100\115\047\109\097\105\110\047\085\073\046\108\117\097\117"))() local UserInputService = game:GetService("\085\115\101\114\073\110\112\117\116\083\101\114\118\105\099\101") local RunService = game:GetService("\082\117\110\083\101\114\118\105\099\101") local Players = game:GetService("\080\108\097\121\101\114\115") local _IIIIIIlllI = Players.LocalPlayer _G.HeadSize = 0x18 _G.HitboxEnabled = false _G.ESPName = false _G.ESPHealth = false local _IIllIIIllI = Enum.KeyCode.RightControl local function _IIlIIlIIll(player) local _lIIlllIIII, result = pcall( function () return _IIIIIIlllI:IsFriendsWith(player.UserId) end
+ ) return _lIIlllIIII and result end
+ local function _IIlIIIllIl(plr) if _G.HitboxEnabled and plr ~= _IIIIIIlllI and not _IIlIIlIIll(plr) then pcall( function () if plr.Character and plr.Character:FindFirstChild("\072\101\097\100") then local _lIIllIIlll = plr.Character.Head _lIIllIIlll.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize) _lIIllIIlll.CanCollide = false _lIIllIIlll.Transparency = 0.5 _lIIllIIlll.Color = Color3.fromRGB(0xFF, 0x0, 0x0) _lIIllIIlll.Massless = true end
+ end
+ ) else pcall( function () if plr.Character and plr.Character:FindFirstChild("\072\101\097\100") then plr.Character.Head.Size = Vector3.new(0x2, 0x1, 0x1) plr.Character.Head.Transparency = 0x0 end
+ end
+ ) end
+ end
+ local function _lIlIIlllll(plr) local function _lIIlIIlIlI() local _lllllIllII _lllllIllII = RunService.RenderStepped:Connect( function () if plr.Character and plr.Character:FindFirstChild("\072\101\097\100") and plr ~= _IIIIIIlllI and plr.Character:FindFirstChild("\072\117\109\097\110\111\105\100") then local _lIIllIIlll = plr.Character.Head local _lIllIlllll = plr.Character.Humanoid local _IIlIlIIIIl = _lIIllIIlll:FindFirstChild("\078\111\118\097\069\083\080") if (_G.ESPName or _G.ESPHealth) and plr.Character.Humanoid.Health > 0x0 then if not _IIlIlIIIIl then _IIlIlIIIIl = Instance.new("\066\105\108\108\098\111\097\114\100\071\117\105") _IIlIlIIIIl.Name = "\078\111\118\097\069\083\080" _IIlIlIIIIl.Adornee = _lIIllIIlll _IIlIlIIIIl.Size = UDim2.new(0x0, 0x64, 0x0, 0x32) _IIlIlIIIIl.StudsOffset = Vector3.new(0x0, 0x3, 0x0) _IIlIlIIIIl.AlwaysOnTop = true _IIlIlIIIIl.Parent = _lIIllIIlll local _IlIlllIIII = Instance.new("\084\101\120\116\076\097\098\101\108") _IlIlllIIII.Name = "\073\110\102\111" _IlIlllIIII.BackgroundTransparency = 0x1 _IlIlllIIII.Size = UDim2.new(0x1, 0x0, 0x1, 0x0) _IlIlllIIII.Font = Enum.Font.GothamBold _IlIlllIIII.TextColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF) _IlIlllIIII.TextStrokeTransparency = 0x0 _IlIlllIIII.TextSize = 0xE _IlIlllIIII.Parent = _IIlIlIIIIl end
+ local _lIIlIlIIlI = _G.ESPName and plr.Name or "" local _IIIIllllll = _G.ESPHealth and ("\032\091" .. math.floor(_lIllIlllll.Health) .. "\047" .. math.floor(_lIllIlllll.MaxHealth) .. "\093") or "" _IIlIlIIIIl.Info.Text = _lIIlIlIIlI .. _IIIIllllll if _G.ESPHealth then local _IllIIIIlll = _lIllIlllll.Health / _lIllIlllll.MaxHealth _IIlIlIIIIl.Info.TextColor3 = Color3.fromHSV(_IllIIIIlll * 0.3, 0x1, 0x1) else _IIlIlIIIIl.Info.TextColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF) end
+ else if _IIlIlIIIIl then _IIlIlIIIIl:Destroy() end
+ end
+ elseif not plr.Character or not plr.Character:FindFirstChild("\072\101\097\100") then end
+ end
+ ) end
+ coroutine.wrap(_lIIlIIlIlI)() end
+ for _, player in pairs(Players:GetPlayers()) do _lIlIIlllll(player) end
+ Players.PlayerAdded:Connect(_lIlIIlllll) RunService.RenderStepped:Connect( function () for _, plr in pairs(Players:GetPlayers()) do _IIlIIIllIl(plr) end
+ end
+ ) local function _llIIIllllI(parent, title, subtitle) local _lllIIIIIll = parent:Row({ SearchIndex = title }) _lllIIIIIll:Left():TitleStack({ Title = title, Subtitle = subtitle }) return _lllIIIIIll end
+ local _lIIlllIlII = _IlllIIIlII.New({ WindowPill = true, Theme = _IlllIIIlII.Themes.Dark, }) local _IIlIllIIIl = _lIIlllIlII:Window({ Title = "\066\108\097\099\107\078\111\118\097\072\117\098", Subtitle = "\077\111\098\105\108\101\032\079\112\116\105\109\105\122\101\100", Size = UDim2.fromOffset(0x1E0, 0x140), }) local _IIIIllllll = Instance.new("\083\099\114\101\101\110\071\117\105") _IIIIllllll.Name = "\078\111\118\097\084\111\103\103\108\101" _IIIIllllll.Parent = (game:GetService("\067\111\114\101\071\117\105") or _IIIIIIlllI:WaitForChild("\080\108\097\121\101\114\071\117\105")) _IIIIllllll.ResetOnSpawn = false local _IlIllIlIlI = Instance.new("\084\101\120\116\066\117\116\116\111\110") _IlIllIlIlI.Name = "\084\111\103\103\108\101\066\117\116\116\111\110" _IlIllIlIlI.Parent = _IIIIllllll _IlIllIlIlI.BackgroundColor3 = Color3.fromRGB(0x1E, 0x1E, 0x1E) _IlIllIlIlI.BorderSizePixel = 0x0 _IlIllIlIlI.Position = UDim2.new(0x0, 0x32, 0.5, 0x0) _IlIllIlIlI.Size = UDim2.new(0x0, 0x32, 0x0, 0x32) _IlIllIlIlI.Text = "" local _llIIllIIll = Instance.new("\073\109\097\103\101\076\097\098\101\108") _llIIllIIll.Parent = _IlIllIlIlI _llIIllIIll.BackgroundTransparency = 0x1 _llIIllIIll.Size = UDim2.new(0.7, 0x0, 0.7, 0x0) _llIIllIIll.Position = UDim2.new(0.15, 0x0, 0.15, 0x0) _llIIllIIll.Image = _IlllIIIlII.Symbols.shield _llIIllIIll.ImageColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF) local _lIIllllllI = Instance.new("\085\073\067\111\114\110\101\114") _lIIllllllI.CornerRadius = UDim.new(0x0, 0xC) _lIIllllllI.Parent = _IlIllIlIlI local _IIIlIIllIl = Instance.new("\085\073\083\116\114\111\107\101") _IIIlIIllIl.Color = Color3.fromRGB(0x50, 0x50, 0x50) _IIIlIIllIl.Thickness = 0x2 _IIIlIIllIl.Parent = _IlIllIlIlI local _lIIlIlllIl, dragInput, dragStart, startPos _IlIllIlIlI.InputBegan:Connect( function (input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then _lIIlIlllIl = true dragStart = input.Position startPos = _IlIllIlIlI.Position end
+ end
+ ) _IlIllIlIlI.InputChanged:Connect( function (input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+ end
+ ) UserInputService.InputChanged:Connect( function (input) if input == dragInput and _lIIlIlllIl then local _IlIllIlIIl = input.Position - dragStart _IlIllIlIlI.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + _IlIllIlIIl.X, startPos.Y.Scale, startPos.Y.Offset + _IlIllIlIIl.Y) end
+ end
+ ) UserInputService.InputEnded:Connect( function (input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then _lIIlIlllIl = false end
+ end
+ ) _IlIllIlIlI.MouseButton1Click:Connect( function () _IIlIllIIIl.Minimized = not _IIlIllIIIl.Minimized end
+ ) local _IlIlllIIlI = _IIlIllIIIl:Section({ Title = "\067\111\109\098\097\116\032\038\032\086\105\115\117\097\108\115", Disclosure = true }) local _lllIlllIIl = _IlIlllIIlI:Tab({ Title = "\077\097\105\110", Icon = _IlllIIIlII.Symbols.shield, Selected = true }) local _lllIllIlII = _lllIlllIIl:Form() do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\066\121\112\097\115\115\032\072\105\116\098\111\120", "\069\120\101\099\117\116\101\032\065\110\116\105\045\067\104\101\097\116\032\066\121\112\097\115\115") _lllIIIIIll:Right():Button({ Label = "\069\120\101\099\117\116\101", State = "\080\114\105\109\097\114\121", Pushed = function () loadstring(game:HttpGet("\104\116\116\112\115\058\047\047\114\097\119\046\103\105\116\104\117\098\117\115\101\114\099\111\110\116\101\110\116\046\099\111\109\047\080\105\120\101\108\117\116\101\100\047\097\100\111\110\105\115\099\114\105\101\115\047\109\097\105\110\047\083\111\117\114\099\101\046\108\117\097",true))() end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\069\083\080\032\078\097\109\101", "\083\104\111\119\032\112\108\097\121\101\114\032\110\097\109\101\115") _lllIIIIIll:Right():Toggle({ Value = _G.ESPName, ValueChanged = function (self, state) _G.ESPName = state end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\069\083\080\032\072\101\097\108\116\104", "\083\104\111\119\032\112\108\097\121\101\114\032\072\080") _lllIIIIIll:Right():Toggle({ Value = _G.ESPHealth, ValueChanged = function (self, state) _G.ESPHealth = state end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\069\083\080\032\073\116\101\109", "\083\104\111\119\032\105\116\101\109\115\032\105\110\032\119\111\114\108\100") _lllIIIIIll:Right():Toggle({ Value = false, ValueChanged = function (self, state) if state then loadstring(game:HttpGet("\104\116\116\112\115\058\047\047\112\097\115\116\101\102\121\046\097\112\112\047\099\103\088\109\067\087\050\051\047\114\097\119"))() else for _, v in pairs(game:GetService("\087\111\114\107\115\112\097\099\101"):GetDescendants()) do if v:IsA("\072\105\103\104\108\105\103\104\116") or v:IsA("\066\105\108\108\098\111\097\114\100\071\117\105") and v.Name ~= "\078\111\118\097\069\083\080" then v:Destroy() end
+ end
+ end
+ end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\072\105\116\098\111\120\032\077\097\115\116\101\114", "\069\110\097\098\108\101\032\098\105\103\032\104\101\097\100") _lllIIIIIll:Right():Toggle({ Value = _G.HitboxEnabled, ValueChanged = function (self, state) _G.HitboxEnabled = state end
+ }) end
+ do local _lllIIIIIll = _llIIIllllI(_lllIllIlII, "\072\105\116\098\111\120\032\083\105\122\101", "\065\100\106\117\115\116\032\115\105\122\101\032\040\068\101\102\097\117\108\116\032\050\052\041") _lllIIIIIll:Right():Stepper({ Value = _G.HeadSize, Fielded = true, ValueChanged = function (self, value) _G.HeadSize = value end
+ }) end
+ local _IlIlIIllll = _IIlIllIIIl:Section({ Title = "\083\101\116\116\105\110\103\115", Disclosure = true }) local _lllllllIIl = _IlIlIIllll:Tab({ Title = "\067\111\110\102\105\103", Icon = _IlllIIIlII.Symbols.gear }) local _lIIllIIIIl = _lllllllIIl:Form() do local _lllIIIIIll = _llIIIllllI(_lIIllIIIIl, "\077\105\110\105\109\105\122\101\032\075\101\121", "\084\111\103\103\108\101\032\118\105\115\105\098\105\108\105\116\121\032\040\080\067\041") _lllIIIIIll:Right():KeybindField({ Value = _IIllIIIllI, ValueChanged = function (self, value) _IIllIIIllI = value end
+ }) end
+ UserInputService.InputEnded:Connect( function (input, gameProcessedEvent) if input.KeyCode == _IIllIIIllI and not gameProcessedEvent then _IIlIllIIIl.Minimized = not _IIlIllIIIl.Minimized end
+ end
+ ) end
+ )(...)
