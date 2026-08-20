@@ -1,0 +1,639 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+
+local LocalPlayer = Players.LocalPlayer
+
+-- =========================================================
+-- SETTINGS
+-- =========================================================
+
+local ESPEnabled = false
+
+local Blacklist = {
+    ["Fists"] = true,
+    ["Fist"] = true,
+    ["Hands"] = true,
+    ["Tool"] = true,
+    ["ง้าว"] = true,
+    ["มีดพก2"] = true,
+    ["มีดหัวตัด"] = true,
+    ["แหนบ"] = true,
+}
+
+local ESPData = {}
+
+-- =========================================================
+-- CLEAN OLD GUI
+-- =========================================================
+
+pcall(function()
+    local old = CoreGui:FindFirstChild("ItemESP_Hub")
+    if old then
+        old:Destroy()
+    end
+end)
+
+-- =========================================================
+-- FUNCTIONS
+-- =========================================================
+
+local function IsBlacklisted(name)
+    return Blacklist[name] == true
+end
+
+local function DisconnectAll(connections)
+    if not connections then
+        return
+    end
+
+    for _, connection in ipairs(connections) do
+        pcall(function()
+            connection:Disconnect()
+        end)
+    end
+
+    table.clear(connections)
+end
+
+local function RemoveESP(player)
+    local data = ESPData[player]
+
+    if not data then
+        return
+    end
+
+    DisconnectAll(data.connections)
+
+    if data.gui then
+        pcall(function()
+            data.gui:Destroy()
+        end)
+    end
+
+    ESPData[player] = nil
+end
+
+-- =========================================================
+-- CREATE PLAYER ESP
+-- =========================================================
+
+local function CreateESP(player, character)
+
+    if not ESPEnabled then
+        return
+    end
+
+    if player == LocalPlayer then
+        return
+    end
+
+    if not character or not character.Parent then
+        return
+    end
+
+    local root = character:FindFirstChild("HumanoidRootPart")
+
+    if not root then
+        root = character:WaitForChild("HumanoidRootPart", 10)
+    end
+
+    if not root then
+        return
+    end
+
+    RemoveESP(player)
+
+    -- =====================================================
+    -- BILLBOARD
+    -- =====================================================
+
+    local gui = Instance.new("BillboardGui")
+
+    gui.Name = "ItemESP"
+    gui.Adornee = root
+    gui.Size = UDim2.fromOffset(300, 45)
+    gui.StudsOffset = Vector3.new(0, -4.5, 0)
+    gui.AlwaysOnTop = true
+    gui.MaxDistance = 999999999
+    gui.LightInfluence = 0
+    gui.Enabled = true
+    gui.Parent = root
+
+    -- =====================================================
+    -- LABEL
+    -- =====================================================
+
+    local label = Instance.new("TextLabel")
+
+    label.Name = "Items"
+    label.Size = UDim2.fromScale(1, 1)
+    label.BackgroundTransparency = 1
+
+    label.TextColor3 = Color3.fromRGB(
+        255,
+        255,
+        255
+    )
+
+    label.TextStrokeColor3 = Color3.fromRGB(
+        0,
+        0,
+        0
+    )
+
+    label.TextStrokeTransparency = 0
+
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 13
+    label.TextWrapped = true
+
+    label.TextXAlignment = Enum.TextXAlignment.Center
+    label.TextYAlignment = Enum.TextYAlignment.Center
+
+    label.Parent = gui
+
+    local connections = {}
+
+    ESPData[player] = {
+        gui = gui,
+        label = label,
+        character = character,
+        connections = connections
+    }
+
+    -- =====================================================
+    -- UPDATE
+    -- =====================================================
+
+    local function Update()
+
+        if not ESPEnabled then
+            return
+        end
+
+        if not gui.Parent then
+            return
+        end
+
+        if not character.Parent then
+            return
+        end
+
+        local items = {}
+        local added = {}
+
+        -- =================================================
+        -- BACKPACK
+        -- =================================================
+
+        local backpack = player:FindFirstChildOfClass("Backpack")
+
+        if backpack then
+
+            for _, item in ipairs(backpack:GetChildren()) do
+
+                if item:IsA("Tool") and not IsBlacklisted(item.Name) then
+
+                    if not added[item] then
+
+                        added[item] = true
+
+                        table.insert(
+                            items,
+                            item.Name
+                        )
+
+                    end
+                end
+            end
+        end
+
+        -- =================================================
+        -- HELD ITEM
+        -- =================================================
+
+        for _, item in ipairs(character:GetChildren()) do
+
+            if item:IsA("Tool") and not IsBlacklisted(item.Name) then
+
+                if not added[item] then
+
+                    added[item] = true
+
+                    table.insert(
+                        items,
+                        "★ " .. item.Name
+                    )
+
+                end
+            end
+        end
+
+        -- =================================================
+        -- DISPLAY
+        -- =================================================
+
+        if #items == 0 then
+
+            label.Text = ""
+            gui.Enabled = false
+
+        else
+
+            label.Text = table.concat(
+                items,
+                " • "
+            )
+
+            gui.Enabled = true
+        end
+    end
+
+    Update()
+
+    -- =====================================================
+    -- BACKPACK EVENTS
+    -- =====================================================
+
+    local backpack = player:FindFirstChildOfClass("Backpack")
+
+    if backpack then
+
+        table.insert(
+            connections,
+
+            backpack.ChildAdded:Connect(function(obj)
+
+                if obj:IsA("Tool") then
+                    task.defer(Update)
+                end
+
+            end)
+        )
+
+        table.insert(
+            connections,
+
+            backpack.ChildRemoved:Connect(function(obj)
+
+                if obj:IsA("Tool") then
+                    task.defer(Update)
+                end
+
+            end)
+        )
+
+    end
+
+    -- =====================================================
+    -- CHARACTER EVENTS
+    -- =====================================================
+
+    table.insert(
+        connections,
+
+        character.ChildAdded:Connect(function(obj)
+
+            if obj:IsA("Tool") then
+                task.defer(Update)
+            end
+
+        end)
+    )
+
+    table.insert(
+        connections,
+
+        character.ChildRemoved:Connect(function(obj)
+
+            if obj:IsA("Tool") then
+                task.defer(Update)
+            end
+
+        end)
+    )
+
+end
+
+-- =========================================================
+-- SETUP PLAYER
+-- =========================================================
+
+local function SetupPlayer(player)
+
+    if player == LocalPlayer then
+        return
+    end
+
+    if player.Character then
+
+        task.spawn(function()
+
+            CreateESP(
+                player,
+                player.Character
+            )
+
+        end)
+
+    end
+
+    player.CharacterAdded:Connect(function(character)
+
+        if not ESPEnabled then
+            return
+        end
+
+        local root = character:WaitForChild(
+            "HumanoidRootPart",
+            10
+        )
+
+        if root then
+
+            task.wait(0.15)
+
+            if player.Parent and ESPEnabled then
+
+                CreateESP(
+                    player,
+                    character
+                )
+
+            end
+        end
+
+    end)
+
+    player.AncestryChanged:Connect(function(_, parent)
+
+        if not parent then
+            RemoveESP(player)
+        end
+
+    end)
+
+end
+
+-- =========================================================
+-- START ESP
+-- =========================================================
+
+local function StartESP()
+
+    ESPEnabled = true
+
+    for _, player in ipairs(Players:GetPlayers()) do
+
+        if player ~= LocalPlayer then
+
+            task.spawn(function()
+                SetupPlayer(player)
+            end)
+
+        end
+
+    end
+
+end
+
+-- =========================================================
+-- STOP ESP
+-- =========================================================
+
+local function StopESP()
+
+    ESPEnabled = false
+
+    for player in pairs(ESPData) do
+        RemoveESP(player)
+    end
+
+end
+
+-- =========================================================
+-- PLAYER EVENTS
+-- =========================================================
+
+Players.PlayerAdded:Connect(function(player)
+
+    if ESPEnabled then
+        SetupPlayer(player)
+    end
+
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+
+    RemoveESP(player)
+
+end)
+
+-- =========================================================
+-- TOGGLE GUI
+-- =========================================================
+
+local ToggleGui = Instance.new("ScreenGui")
+
+ToggleGui.Name = "ItemESP_Hub"
+ToggleGui.ResetOnSpawn = false
+ToggleGui.IgnoreGuiInset = true
+ToggleGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+ToggleGui.Parent = CoreGui
+
+-- =========================================================
+-- TOGGLE BUTTON
+-- =========================================================
+
+local ToggleButton = Instance.new("TextButton")
+
+ToggleButton.Name = "ToggleButton"
+
+ToggleButton.Size = UDim2.fromOffset(
+    120,
+    42
+)
+
+ToggleButton.Position = UDim2.new(
+    0,
+    20,
+    0.5,
+    -21
+)
+
+ToggleButton.BackgroundColor3 =
+    Color3.fromRGB(25, 25, 25)
+
+ToggleButton.BackgroundTransparency = 0.05
+
+ToggleButton.BorderSizePixel = 0
+
+ToggleButton.Text = "ESP : OFF"
+
+ToggleButton.TextColor3 =
+    Color3.fromRGB(255, 255, 255)
+
+ToggleButton.TextSize = 14
+
+ToggleButton.Font =
+    Enum.Font.GothamBold
+
+ToggleButton.Active = true
+
+ToggleButton.Selectable = true
+
+ToggleButton.ZIndex = 9999
+
+ToggleButton.Parent = ToggleGui
+
+-- =========================================================
+-- CORNER
+-- =========================================================
+
+local Corner = Instance.new("UICorner")
+
+Corner.CornerRadius =
+    UDim.new(0, 10)
+
+Corner.Parent = ToggleButton
+
+-- =========================================================
+-- STROKE
+-- =========================================================
+
+local Stroke = Instance.new("UIStroke")
+
+Stroke.Thickness = 1.5
+
+Stroke.Transparency = 0.1
+
+Stroke.Parent = ToggleButton
+
+-- =========================================================
+-- TOGGLE
+-- =========================================================
+
+ToggleButton.MouseButton1Click:Connect(function()
+
+    ESPEnabled = not ESPEnabled
+
+    if ESPEnabled then
+
+        ToggleButton.Text = "ESP : ON"
+
+        ToggleButton.BackgroundColor3 =
+            Color3.fromRGB(20, 120, 60)
+
+        StartESP()
+
+    else
+
+        ToggleButton.Text = "ESP : OFF"
+
+        ToggleButton.BackgroundColor3 =
+            Color3.fromRGB(25, 25, 25)
+
+        StopESP()
+
+    end
+
+end)
+
+-- =========================================================
+-- DRAG SYSTEM
+-- =========================================================
+
+local dragging = false
+local dragStart
+local startPosition
+local moved = false
+
+local DRAG_DISTANCE = 8
+
+ToggleButton.InputBegan:Connect(function(input)
+
+    if input.UserInputType ==
+        Enum.UserInputType.MouseButton1
+        or input.UserInputType ==
+        Enum.UserInputType.Touch then
+
+        dragging = true
+        moved = false
+
+        dragStart = input.Position
+        startPosition = ToggleButton.Position
+
+    end
+
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+
+    if not dragging then
+        return
+    end
+
+    if input.UserInputType ~=
+        Enum.UserInputType.MouseMovement
+        and input.UserInputType ~=
+        Enum.UserInputType.Touch then
+
+        return
+    end
+
+    local delta =
+        input.Position - dragStart
+
+    if math.abs(delta.X) > DRAG_DISTANCE
+        or math.abs(delta.Y) > DRAG_DISTANCE then
+
+        moved = true
+
+    end
+
+    if moved then
+
+        ToggleButton.Position = UDim2.new(
+
+            startPosition.X.Scale,
+
+            startPosition.X.Offset + delta.X,
+
+            startPosition.Y.Scale,
+
+            startPosition.Y.Offset + delta.Y
+
+        )
+
+    end
+
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+
+    if not dragging then
+        return
+    end
+
+    if input.UserInputType ~=
+        Enum.UserInputType.MouseButton1
+        and input.UserInputType ~=
+        Enum.UserInputType.Touch then
+
+        return
+    end
+
+    dragging = false
+
+    dragStart = nil
+    startPosition = nil
+
+end)
+
+-- =========================================================
+-- START
+-- =========================================================
+
+print("Item ESP loaded successfully.")
